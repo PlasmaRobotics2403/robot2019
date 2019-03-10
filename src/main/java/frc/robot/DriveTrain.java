@@ -52,7 +52,24 @@ public class DriveTrain {
 		
 
 		ErrorCode error1 = leftDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+		leftDrive.configNominalOutputForward(0, 30);
+    	leftDrive.configNominalOutputReverse(0, 30);
+    	leftDrive.configPeakOutputForward(1, 30);
+    	leftDrive.configPeakOutputReverse(-1, 30);
+    	leftDrive.config_kF(0, .25, 30);
+		leftDrive.config_kP(0, .001, 30);
+		leftDrive.config_kI(0, 20, 30);
+		leftDrive.config_kD(0, 1023.0/7200.0, 30);
+		
 		ErrorCode error2 = rightDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+		rightDrive.configNominalOutputForward(0, 30);
+    	rightDrive.configNominalOutputReverse(0, 30);
+    	rightDrive.configPeakOutputForward(1, 30);
+    	rightDrive.configPeakOutputReverse(-1, 30);
+    	rightDrive.config_kF(0, .25, 30);
+		rightDrive.config_kP(0, .001, 30);
+		rightDrive.config_kI(0, 20, 30);
+		rightDrive.config_kD(0, 1023.0/7200.0, 30);
 
 		leftDrive.setSelectedSensorPosition(0,0,0);
 		rightDrive.setSelectedSensorPosition(0,0,0);

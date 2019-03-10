@@ -127,10 +127,10 @@ public abstract class AutoMode {
 	 * @author Nic A
 	 */
 	public void stop(){
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		new Throwable().printStackTrace(pw);
-		DriverStation.reportWarning("stopping Action " + sw.toString(), true);
+		//StringWriter sw = new StringWriter();
+		//PrintWriter pw = new PrintWriter(sw);
+		//new Throwable().printStackTrace(pw);
+		//riverStation.reportWarning("stopping Action " + sw.toString(), true);
 		isActive = false;
 	}
 	

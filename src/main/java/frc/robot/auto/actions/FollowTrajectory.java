@@ -34,22 +34,23 @@ public class FollowTrajectory implements Action {
 			double l = leftFollower.calculate(drive.leftDrive.getSelectedSensorPosition(0));
 			double r = rightFollower.calculate(drive.rightDrive.getSelectedSensorPosition(0));
 			
-			DriverStation.reportError("leftFollower: " + l, false);
-			DriverStation.reportError("rightFollower: " + r, false);
+			//DriverStation.reportError("leftFollower: " + l, false);
+			//DriverStation.reportError("rightFollower: " + r, false);
 
 			double currentHeading = -drive.getGyroAngle();
 			double desiredHeading = Pathfinder.r2d(leftFollower.getHeading());
 			
 			double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - currentHeading);
-			double turn = .28 * angleDifference;
+			double turn = .68 * angleDifference;
 			
 			SmartDashboard.putNumber("angleDiff", angleDifference);
+			SmartDashboard.putNumber("turn: ", turn);
 			
 			double speedL = (l - turn) * .1 / Constants.DRIVE_ENCODER_CONVERSION;
 			double speedR = (r + turn) * .1 / Constants.DRIVE_ENCODER_CONVERSION;
 			
-			DriverStation.reportError("speedL: " + speedL, false);
-			DriverStation.reportError("speedR: " + speedR, false);
+			//DriverStation.reportError("speedL: " + speedL, false);
+			//DriverStation.reportError("speedR: " + speedR, false);
 			SmartDashboard.putNumber("speedL", speedL);
 			SmartDashboard.putNumber("speedR", speedR);
 
@@ -60,8 +61,8 @@ public class FollowTrajectory implements Action {
 			drive.leftDriveSlaveFront.set(ControlMode.Velocity, speedL);
 			drive.rightDriveSlaveFront.set(ControlMode.Velocity, speedR);
 
-			DriverStation.reportError("left Velocity: " + drive.leftDrive.getActiveTrajectoryVelocity(), false);
-			DriverStation.reportError("speedL afrer setting: " + speedL, false);
+			//DriverStation.reportError("left Velocity: " + drive.leftDrive.getActiveTrajectoryVelocity(), false);
+			//DriverStation.reportError("speedL afrer setting: " + speedL, false);
     		//drive.leftDriveSlaveMid.set(ControlMode.Follower, drive.leftDrive.getDeviceID());
     		//drive.leftDriveSlaveFront.set(ControlMode.Follower, drive.leftDrive.getDeviceID());
     		//drive.rightDriveSlaveMid.set(ControlMode.Follower, drive.rightDrive.getDeviceID());

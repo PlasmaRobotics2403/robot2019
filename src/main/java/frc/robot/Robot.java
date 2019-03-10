@@ -102,6 +102,7 @@ DriverStation.reportWarning("automode generated", false);
         SmartDashboard.putNumber("Auto Mode", 0);
         try{
             driveTrain.resetEncoders();
+            driveTrain.zeroGyro();
         }
         catch(Exception ex){
             DriverStation.reportError("reset encoder error", ex.getStackTrace());

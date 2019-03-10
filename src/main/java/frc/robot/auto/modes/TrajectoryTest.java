@@ -19,7 +19,7 @@ public class TrajectoryTest extends AutoMode {
 	protected void routine() throws AutoModeEndedException {
 		
 		try{
-			runAction(new FollowTrajectory("45 left", drive));	
+			runAction(new FollowTrajectory("center", drive));	
 		}
 		catch(Exception ex){
 			DriverStation.reportError("Failed to follow trajectory. msg=" + ex.getMessage(), ex.getStackTrace());
