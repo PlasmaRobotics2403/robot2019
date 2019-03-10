@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controllers.PlasmaJoystick;
 import edu.wpi.first.wpilibj.Compressor;
-
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -86,10 +86,10 @@ public class Robot extends TimedRobot {
         compressor = new Compressor(0);
         compressor.setClosedLoopControl(true);
 
-    table = NetworkTableInstance.getDefault().getTable("limelight");
-    tx = table.getEntry("tx");
-    ty = table.getEntry("ty");
-    ta = table.getEntry("ta");
+        table = NetworkTableInstance.getDefault().getTable("limelight");
+        tx = table.getEntry("tx");
+        ty = table.getEntry("ty");
+        ta = table.getEntry("ta");
 
         autoModeRunner = new AutoModeRunner();
         autoModes = new AutoMode[1];
@@ -97,9 +97,10 @@ public class Robot extends TimedRobot {
             autoModes[i] = new Nothing();
         }
 
-DriverStation.reportWarning("automode generated", false);
+        DriverStation.reportWarning("automode generated", false);
         autoModeSelection = 0;
         SmartDashboard.putNumber("Auto Mode", 0);
+
         try{
             driveTrain.resetEncoders();
             driveTrain.zeroGyro();
@@ -108,6 +109,8 @@ DriverStation.reportWarning("automode generated", false);
             DriverStation.reportError("reset encoder error", ex.getStackTrace());
         }
         DriverStation.reportWarning("error", false);
+
+        CameraServer.getInstance().startAutomaticCapture();
     }
 
     
