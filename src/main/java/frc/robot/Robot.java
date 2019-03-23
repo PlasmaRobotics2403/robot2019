@@ -26,6 +26,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Robot extends TimedRobot {
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
     PlasmaJoystick joystick;
     DriveTrain driveTrain;
     HatchIntake hatchIntake;
@@ -44,8 +48,11 @@ public class Robot extends TimedRobot {
     NetworkTableEntry ty;
     NetworkTableEntry ta;
 
+<<<<<<< HEAD
     CameraServer server;
 
+=======
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
 
     //private static final String kDefaultAuto = "Default";
     //private static final String kCustomAuto = "My Auto";
@@ -92,8 +99,11 @@ public class Robot extends TimedRobot {
         ty = table.getEntry("ty");
         ta = table.getEntry("ta");
 
+<<<<<<< HEAD
         DriverStation.reportError("tx exists: " + tx.exists(), false);
 
+=======
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
         autoModeRunner = new AutoModeRunner();
         autoModes = new AutoMode[1];
         for(int i = 0; i < autoModes.length; i++){
@@ -105,7 +115,11 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Auto Mode", 0);
 
         try{
+<<<<<<< HEAD
             //driveTrain.resetEncoders();
+=======
+            driveTrain.resetEncoders();
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
             driveTrain.zeroGyro();
         }
         catch(Exception ex){
@@ -113,7 +127,11 @@ public class Robot extends TimedRobot {
         }
         DriverStation.reportWarning("error", false);
 
+<<<<<<< HEAD
         CameraServer.getInstance().startAutomaticCapture("USB camera", 0);
+=======
+        CameraServer.getInstance().startAutomaticCapture();
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
     }
 
     
@@ -128,7 +146,11 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("LimelightX", x);
         SmartDashboard.putNumber("LimelightY", y);
         SmartDashboard.putNumber("LimelighArea", area);
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
     }
 
     public void disabledInit() {
@@ -143,9 +165,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+<<<<<<< HEAD
         
         DriverStation.reportWarning("starting auto", false);
         //driveTrain.resetEncoders();
+=======
+        DriverStation.reportWarning("starting auto", false);
+        driveTrain.resetEncoders();
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
         DriverStation.reportWarning("auto after reset encoders", false);
         compressor.start();
         driveTrain.zeroGyro();
@@ -159,14 +186,20 @@ public class Robot extends TimedRobot {
         }
         autoModeRunner.chooseAutoMode(autoModes[0]); 
         autoModeRunner.start();
+<<<<<<< HEAD
         
+=======
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
     }
 
     @Override
     public void autonomousPeriodic() {
         driveTrain.getDistance();
         SmartDashboard.putNumber("GyroAngle", driveTrain.getGyroAngle());
+<<<<<<< HEAD
         //driverControls(joystick);
+=======
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
     }
 
     @Override
@@ -220,10 +253,17 @@ public class Robot extends TimedRobot {
         }
     
         if(joystick.RB.isPressed()){
+<<<<<<< HEAD
             cargoIntake.intakeCargo(-1);
         }
         else if(joystick.LB.isPressed()){
             cargoIntake.intakeCargo(1);
+=======
+            cargoIntake.intakeCargo(1);
+        }
+        else if(joystick.LB.isPressed()){
+            cargoIntake.intakeCargo(-1);
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
         }
         else{
             cargoIntake.intakeCargo(0);

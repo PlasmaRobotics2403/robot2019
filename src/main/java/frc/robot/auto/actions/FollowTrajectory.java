@@ -120,6 +120,10 @@ public class FollowTrajectory implements Action {
 		rightFollower.configurePIDVA(.4, 0, 0, 1, 0);
 		followLoop.startPeriodic(.01);
 		
+<<<<<<< HEAD
+=======
+		
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
 	}
 
 	@Override

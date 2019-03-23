@@ -47,9 +47,15 @@ public class TurnAngle implements Action {
 
 	@Override
 	public void start() {
+<<<<<<< HEAD
 		//drive.resetEncoders();
 		while(Math.abs(drive.getDistance()) > 1){
 			//drive.resetEncoders();
+=======
+		drive.resetEncoders();
+		while(Math.abs(drive.getDistance()) > 1){
+			drive.resetEncoders();
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
 			DriverStation.reportWarning("broke", false);
 			}
 		drive.zeroGyro();

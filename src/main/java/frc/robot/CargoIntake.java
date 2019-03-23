@@ -5,7 +5,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj.DriverStation;
+=======
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -19,7 +22,11 @@ public class CargoIntake {
 
     DigitalInput pivotLimit;
 
+<<<<<<< HEAD
     Servo cameraMount;
+=======
+    private Servo cameraMount;
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
 
     CargoIntake(int pivot_motor_ID, int intake_motor_ID, int pivot_limit_ID, int camera_servo_ID){
         pivotMotor = new TalonSRX(pivot_motor_ID);
@@ -38,11 +45,16 @@ public class CargoIntake {
         limitCurrent(intakeMotor);
 
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
         
     void pivotIntake(double speed){
 
         speed *= Constants.MAX_INTAKE_PIVOT_SPEED;
         if(pivotLimit.get()){
+<<<<<<< HEAD
             //cameraMount.setAngle(180);
         }
         else{
@@ -50,6 +62,15 @@ public class CargoIntake {
         }
 
         if(speed > 0 && !pivotLimit.get()) {
+=======
+            cameraMount.setAngle(180);
+        }
+        else{
+            cameraMount.setAngle(135);
+        }
+
+        if(speed < 0 && pivotLimit.get()) {
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
            pivotSpeed = 0;
         }
         else if(speed > 0) {
@@ -65,7 +86,11 @@ public class CargoIntake {
         else {
             pivotSpeed = 0;
         }
+<<<<<<< HEAD
         pivotMotor.set(ControlMode.PercentOutput, pivotSpeed);
+=======
+        pivotMotor.set(ControlMode.PercentOutput, speed);
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
 
         SmartDashboard.putNumber("Pivot Enc", pivotMotor.getSelectedSensorPosition(0));
         SmartDashboard.putBoolean("Pivot Limit", pivotLimit.get());
@@ -80,6 +105,10 @@ public class CargoIntake {
 		talon.configPeakCurrentLimit(45, 1000);
 		talon.configContinuousCurrentLimit(45, 1000);
 		talon.enableCurrentLimit(true);
+<<<<<<< HEAD
+=======
+
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
 		talon.configClosedloopRamp(1);
     }
     

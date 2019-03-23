@@ -33,9 +33,15 @@ public class DriveStraight implements Action {
 	@Override
 	public void start() {
 		drive.zeroGyro();
+<<<<<<< HEAD
 		//drive.resetEncoders();
 		while(Math.abs(drive.getDistance()) >1){
 			//drive.resetEncoders();
+=======
+		drive.resetEncoders();
+		while(Math.abs(drive.getDistance()) >1){
+			drive.resetEncoders();
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
 		}
 		drive.zeroGyro();
 	}

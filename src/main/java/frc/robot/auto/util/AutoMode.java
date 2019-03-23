@@ -1,7 +1,12 @@
 package frc.robot.auto.util;
 
+<<<<<<< HEAD
 //import java.io.PrintWriter;
 //import java.io.StringWriter;
+=======
+import java.io.PrintWriter;
+import java.io.StringWriter;
+>>>>>>> a45eca185e396805c6faa1169b4148358e630135
 
 import edu.wpi.first.wpilibj.DriverStation;
 
