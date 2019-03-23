@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -18,7 +19,7 @@ public class CargoIntake {
 
     DigitalInput pivotLimit;
 
-    private Servo cameraMount;
+    Servo cameraMount;
 
     CargoIntake(int pivot_motor_ID, int intake_motor_ID, int pivot_limit_ID, int camera_servo_ID){
         pivotMotor = new TalonSRX(pivot_motor_ID);
@@ -37,19 +38,18 @@ public class CargoIntake {
         limitCurrent(intakeMotor);
 
     }
-
         
     void pivotIntake(double speed){
 
         speed *= Constants.MAX_INTAKE_PIVOT_SPEED;
         if(pivotLimit.get()){
-            cameraMount.setAngle(180);
+            //cameraMount.setAngle(180);
         }
         else{
-            cameraMount.setAngle(135);
+            //cameraMount.setAngle(135);
         }
 
-        if(speed < 0 && pivotLimit.get()) {
+        if(speed > 0 && !pivotLimit.get()) {
            pivotSpeed = 0;
         }
         else if(speed > 0) {
@@ -65,7 +65,7 @@ public class CargoIntake {
         else {
             pivotSpeed = 0;
         }
-        pivotMotor.set(ControlMode.PercentOutput, speed);
+        pivotMotor.set(ControlMode.PercentOutput, pivotSpeed);
 
         SmartDashboard.putNumber("Pivot Enc", pivotMotor.getSelectedSensorPosition(0));
         SmartDashboard.putBoolean("Pivot Limit", pivotLimit.get());
