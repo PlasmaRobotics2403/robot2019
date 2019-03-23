@@ -80,7 +80,6 @@ public class CargoIntake {
 		talon.configPeakCurrentLimit(45, 1000);
 		talon.configContinuousCurrentLimit(45, 1000);
 		talon.enableCurrentLimit(true);
-
 		talon.configClosedloopRamp(1);
     }
     

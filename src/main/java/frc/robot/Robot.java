@@ -26,7 +26,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Robot extends TimedRobot {
 
-
     PlasmaJoystick joystick;
     DriveTrain driveTrain;
     HatchIntake hatchIntake;
