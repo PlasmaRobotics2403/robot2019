@@ -51,11 +51,7 @@ public class DriveTrain {
 		rightDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1);
 		
 
-<<<<<<< HEAD
 		//ErrorCode error1 = leftDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-=======
-		ErrorCode error1 = leftDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
->>>>>>> a45eca185e396805c6faa1169b4148358e630135
 		leftDrive.configNominalOutputForward(0, 30);
     	leftDrive.configNominalOutputReverse(0, 30);
     	leftDrive.configPeakOutputForward(1, 30);
@@ -65,11 +61,7 @@ public class DriveTrain {
 		leftDrive.config_kI(0, 20, 30);
 		leftDrive.config_kD(0, 1023.0/7200.0, 30);
 		
-<<<<<<< HEAD
 		//ErrorCode error2 = rightDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-=======
-		ErrorCode error2 = rightDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
->>>>>>> a45eca185e396805c6faa1169b4148358e630135
 		rightDrive.configNominalOutputForward(0, 30);
     	rightDrive.configNominalOutputReverse(0, 30);
     	rightDrive.configPeakOutputForward(1, 30);
@@ -79,26 +71,16 @@ public class DriveTrain {
 		rightDrive.config_kI(0, 20, 30);
 		rightDrive.config_kD(0, 1023.0/7200.0, 30);
 
-<<<<<<< HEAD
 		//leftDrive.setSelectedSensorPosition(0,0,0);
 		//rightDrive.setSelectedSensorPosition(0,0,0);
-=======
-		leftDrive.setSelectedSensorPosition(0,0,0);
-		rightDrive.setSelectedSensorPosition(0,0,0);
->>>>>>> a45eca185e396805c6faa1169b4148358e630135
 
 		leftDrive.set(ControlMode.Position, 0);
 		rightDrive.set(ControlMode.Position, 0);
 
 		
 
-<<<<<<< HEAD
 		//DriverStation.reportError("left Drive error: " + error1 + " position: " + leftDrive.getSelectedSensorPosition(0), false);
 		//DriverStation.reportError("Right Drive error: " + error2 + " position: " + rightDrive.getSelectedSensorPosition(0), false);
-=======
-		DriverStation.reportError("left Drive error: " + error1 + " position: " + leftDrive.getSelectedSensorPosition(0), false);
-		DriverStation.reportError("Right Drive error: " + error2 + " position: " + rightDrive.getSelectedSensorPosition(0), false);
->>>>>>> a45eca185e396805c6faa1169b4148358e630135
 
 		limitCurrent(leftDrive);
 		limitCurrent(rightDrive);
@@ -109,11 +91,7 @@ public class DriveTrain {
 
 		
 	}
-<<<<<<< HEAD
 	/*
-=======
-	
->>>>>>> a45eca185e396805c6faa1169b4148358e630135
 	public void resetEncoders(){
 		//double dist = Math.abs(getDistance());
 		leftDrive.setSelectedSensorPosition(0,0,0);
@@ -125,11 +103,7 @@ public class DriveTrain {
 			DriverStation.reportWarning("Stuck in loop", false);
 		}	
 	}
-<<<<<<< HEAD
 	*/
-=======
-	
->>>>>>> a45eca185e396805c6faa1169b4148358e630135
 	public double getDistance(){
 		return (toDistance(rightDrive) + toDistance(leftDrive))/2;
 	}
@@ -288,7 +262,3 @@ public class DriveTrain {
 		autonTankDrive(0, 0);
 	}
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> a45eca185e396805c6faa1169b4148358e630135

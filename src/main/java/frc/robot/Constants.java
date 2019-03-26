@@ -58,7 +58,7 @@ public class Constants {
 
 	/*HAB CONSTANTS*/
 	public static final double MAX_HAB_DRIVE_SPEED = 0.8;
-	public static final double MAX_HAB_ARM_SPEED = .4;
+	public static final double MAX_HAB_ARM_SPEED = .5;
 	public static final double MAX_HAB_REAR_SPEED = 1;
 
 	/*TALON CONFIG CONSTANTS*/

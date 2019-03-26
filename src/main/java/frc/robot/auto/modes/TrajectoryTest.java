@@ -25,8 +25,4 @@ public class TrajectoryTest extends AutoMode {
 			DriverStation.reportError("Failed to follow trajectory. msg=" + ex.getMessage(), ex.getStackTrace());
 		}
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a45eca185e396805c6faa1169b4148358e630135
