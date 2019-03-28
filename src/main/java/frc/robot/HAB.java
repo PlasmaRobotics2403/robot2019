@@ -9,26 +9,31 @@ public class HAB {
     TalonSRX rightRearRaise;
     TalonSRX leftFrontRaise;
     TalonSRX rightFrontRaise;
+
+    DriveTrain driveTrain;
     
     TalonSRX HABDrive;
 
-    HAB(int left_front_raise_ID, int right_front_raise_ID, int left_rear_raise_ID, int right_rear_raise_ID, int HAB_drive_ID) {
+    HAB(int left_front_raise_ID, int right_front_raise_ID, int left_rear_raise_ID, int right_rear_raise_ID, int HAB_drive_ID, DriveTrain driveTrain) {
             leftFrontRaise = new TalonSRX(left_front_raise_ID);
             rightFrontRaise = new TalonSRX(right_front_raise_ID);
             leftRearRaise = new TalonSRX(left_rear_raise_ID);
             rightRearRaise = new TalonSRX(right_rear_raise_ID);
             HABDrive = new TalonSRX(HAB_drive_ID);
 
+            this.driveTrain = driveTrain;
+
             rightFrontRaise.setInverted(true);
             rightRearRaise.setInverted(true);
     }
 
     void raiseRobot(double speed){
-        HABLift(speed);
+        HABLift(-speed);
     }
 
     void lowerRobot(double speed){
-        HABLift(-speed);
+        HABLift(speed);
+
     }
 
     public void HABLift(double speed) {
@@ -44,6 +49,33 @@ public class HAB {
             leftFrontRaise.set(ControlMode.PercentOutput, speed * Constants.MAX_HAB_ARM_SPEED);
             rightFrontRaise.set(ControlMode.PercentOutput, speed * Constants.MAX_HAB_ARM_SPEED);   
         }
+    }
+
+    boolean climbMode = false;
+    public void GyroHABClimb(){
+        if(climbMode == false){
+            leftFrontRaise.set(ControlMode.PercentOutput, (-1));
+            rightFrontRaise.set(ControlMode.PercentOutput, (-1));
+            if(driveTrain.getGyroPitch() < -2){
+                climbMode = true;
+            }
+        }
+        else{
+            leftRearRaise.set(ControlMode.PercentOutput, (-1) * Constants.MAX_HAB_REAR_SPEED * (1));
+            rightRearRaise.set(ControlMode.PercentOutput, (-1) * Constants.MAX_HAB_REAR_SPEED * (1));
+
+            double speed = driveTrain.getGyroPitch()/5;
+            speed = Math.max(speed, 0);
+            speed = Math.min(speed, 1);
+
+            leftFrontRaise.set(ControlMode.PercentOutput, (-1) * speed * Constants.MAX_HAB_ARM_SPEED * (1));
+            rightFrontRaise.set(ControlMode.PercentOutput, (-1) * speed * Constants.MAX_HAB_ARM_SPEED * (1));
+
+        }
+    }
+
+    public void GyroClimbReset(){
+        climbMode = false;
     }
 
     public void HABForward(double speed) {

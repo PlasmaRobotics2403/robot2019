@@ -82,7 +82,8 @@ public class Robot extends TimedRobot {
                       Constants.R_HAB_ARM_ID,
                       Constants.L_HAB_ELEVATOR_ID,
                       Constants.R_HAB_ELEVATOR_ID,
-                      Constants.HAB_DRIVE);
+                      Constants.HAB_DRIVE,
+                      driveTrain);
 
         compressor = new Compressor(0);
         compressor.setClosedLoopControl(true);
@@ -120,6 +121,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         SmartDashboard.putNumber("GyroAngle", driveTrain.getGyroAngle());
+        SmartDashboard.putNumber("Gyro pitch", driveTrain.getGyroPitch());
 
         double x = tx.getDouble(0.0);
         double y = ty.getDouble(0.0);
@@ -175,6 +177,7 @@ public class Robot extends TimedRobot {
     }
 
 
+    double elevatorTarget = 0;
     public void driverControls(PlasmaJoystick joy){
         driveTrain.FPSDrive(joystick.LeftY, joystick.RightX);
 
@@ -197,17 +200,22 @@ public class Robot extends TimedRobot {
         if(joystick.dPad.getPOV() == 270){
             hatchIntake.halfExtend();
         }
-
-        if(joystick.RT.isPressed()){
-            elevator.Extend(1);
-        }
-        else if(joystick.LT.isPressed()){
-            elevator.Retract(1);
+        
+        if((joystick.LT.isPressed() && joystick.RT.isOffToOn()) || (joystick.RT.isPressed() && joystick.LT.isOffToOn())){
+            elevatorTarget = 29000;
+            DriverStation.reportWarning("Middle", false);
         }
         else{
-            elevator.Extend(0);
-            elevator.Retract(0);
+            if(joystick.LT.isOffToOn()){
+                elevatorTarget = -200;
+                DriverStation.reportWarning("Low", false);
         }
+            if(joystick.RT.isOffToOn()){
+                elevatorTarget = 56000;
+                DriverStation.reportWarning("High", false);
+            }
+        }
+        elevator.magicElevator(elevatorTarget);
 
         if(joystick.Y.isPressed()){
             cargoIntake.pivotIntake(1);
@@ -230,10 +238,12 @@ public class Robot extends TimedRobot {
         }
 
         if(joystick.START.isPressed()){
-            hab.raiseRobot(1);
+            //hab.raiseRobot(1);
+            hab.GyroHABClimb();
         }
         else if(joystick.BACK.isPressed()){
             hab.lowerRobot(1);
+            hab.GyroClimbReset();
         }
         else{
             hab.raiseRobot(0);

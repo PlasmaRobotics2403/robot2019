@@ -31,6 +31,7 @@ public class DriveTrain {
 
 	private AHRS navX;
 	private double gyroAngle;
+	private double gyroPitch;
 	
 	public DriveTrain(int LEFT_ID, int LEFT_MID_S_ID, int LEFT_FRONT_S_ID, int RIGHT_ID, int RIGHT_MID_S_ID, int RIGHT_FRONT_S_ID) {
 
@@ -120,6 +121,7 @@ public class DriveTrain {
 
 	public void updateGyro(){
 		gyroAngle = navX.getYaw();
+		gyroPitch = navX.getPitch();
 	}
 	
 	public double getGyroAngle(){
@@ -127,6 +129,11 @@ public class DriveTrain {
 		return gyroAngle;
 	}
 	
+	public double getGyroPitch(){
+		updateGyro();
+		return gyroPitch;
+	}
+
 	public void zeroGyro(){
 		navX.zeroYaw();
 	}

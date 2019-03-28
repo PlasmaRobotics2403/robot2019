@@ -1,5 +1,6 @@
 package frc.robot;
 
+
 public class Constants {
 	
 	/*front of robot has electronics*/
@@ -58,9 +59,9 @@ public class Constants {
 
 	/*HAB CONSTANTS*/
 	public static final double MAX_HAB_DRIVE_SPEED = 0.8;
-	public static final double MAX_HAB_ARM_SPEED = .5;
+	public static final double MAX_HAB_ARM_SPEED = .6;
 	public static final double MAX_HAB_REAR_SPEED = 1;
-
+	
 	/*TALON CONFIG CONSTANTS*/
 	public static final int TALON_TIMEOUT = 10;
 
@@ -69,5 +70,14 @@ public class Constants {
 	public static final int ELEVATOR_LIMIT_ID = 1;
 
 
-
+	/* ELEVATOR MOTION MAGIC CONSTANTS */
+	public static final double ELEVATOR_P = 0.6;
+	public static final double ELEVATOR_I = 0;
+	public static final double ELEVATOR_D = 6;
+	public static final double ELEVATOR_F = .2;
+	public static final double ELEVATOR_I_ZONE = 0;
+	public static final double ELEVATOR_PEAK_OUTPUT = 1;
+	public static final int ELEVATOR_SLOT_IDX = 0;
+	public static final int ELEVATOR_LOOP_IDX = 0;
+	public static final int ELEVATOR_TIMEOUT = 60;
 }
