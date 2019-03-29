@@ -75,9 +75,19 @@ public class Constants {
 	public static final double ELEVATOR_I = 0;
 	public static final double ELEVATOR_D = 6;
 	public static final double ELEVATOR_F = .2;
-	public static final double ELEVATOR_I_ZONE = 0;
-	public static final double ELEVATOR_PEAK_OUTPUT = 1;
 	public static final int ELEVATOR_SLOT_IDX = 0;
 	public static final int ELEVATOR_LOOP_IDX = 0;
 	public static final int ELEVATOR_TIMEOUT = 60;
+	public static final int ELEVATOR_CRUISE_VELOCITY = 10000;
+	public static final int ELEVATOR_ACCELERATION = 5000;
+
+	public static final double PIVOT_P = 0.6;
+	public static final double PIVOT_I = 0;
+	public static final double PIVOT_D = 6;
+	public static final double PIVOT_F = .2;
+	public static final int PIVOT_SLOT_IDX = 0;
+	public static final int PIVOT_LOOP_IDX = 0;
+	public static final int PIVOT_TIMEOUT = 60;
+	public static final int PIVOT_CRUISE_VELOCITY = 2000;
+	public static final int PIVOT_ACCELERATION = 800;
 }

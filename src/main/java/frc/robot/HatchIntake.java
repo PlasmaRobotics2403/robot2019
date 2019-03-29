@@ -8,19 +8,24 @@ public class HatchIntake {
     Solenoid backExtender;
     Solenoid frontExtender;
 
+    boolean isClamped;
+
     public HatchIntake(int CLAW_PISTON_ID, int BACK_EXTENDER_ID, int FRONT_EXTENDER_ID){
             clawPiston = new Solenoid(CLAW_PISTON_ID);
             backExtender = new Solenoid(BACK_EXTENDER_ID);
             frontExtender = new Solenoid(FRONT_EXTENDER_ID);
 
+            isClamped = true;
     }
 
     void grabHatch(){
         clawPiston.set(false);
+        isClamped = true;
     }
 
     void releaseHatch(){
         clawPiston.set(true);
+        isClamped = false;
     }
 
     void fullExtend(){
@@ -30,6 +35,7 @@ public class HatchIntake {
 
     void halfExtend(){
         backExtender.set(true);
+        frontExtender.set(false);
     }
 
     void fullRetract(){
@@ -37,5 +43,8 @@ public class HatchIntake {
         backExtender.set(false);
     }
 
+    public boolean getIsClamped(){
+        return isClamped;
+    }
 
 }

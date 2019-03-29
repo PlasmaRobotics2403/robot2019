@@ -46,7 +46,8 @@ public class Robot extends TimedRobot {
 
     CameraServer server;
 
-
+    double elevatorTarget;
+    double pivotTarget;
     //private static final String kDefaultAuto = "Default";
     //private static final String kCustomAuto = "My Auto";
     //private String m_autoSelected;
@@ -115,6 +116,9 @@ public class Robot extends TimedRobot {
         DriverStation.reportWarning("error", false);
 
         CameraServer.getInstance().startAutomaticCapture("USB camera", 0);
+
+        elevatorTarget = 0;
+        pivotTarget = 0;
     }
 
     
@@ -173,11 +177,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        driverControls(joystick);
+        newDriverControls(joystick);
     }
 
 
-    double elevatorTarget = 0;
+   /* 
     public void driverControls(PlasmaJoystick joy){
         driveTrain.FPSDrive(joystick.LeftY, joystick.RightX);
 
@@ -209,7 +213,7 @@ public class Robot extends TimedRobot {
             if(joystick.LT.isOffToOn()){
                 elevatorTarget = -200;
                 DriverStation.reportWarning("Low", false);
-        }
+            }
             if(joystick.RT.isOffToOn()){
                 elevatorTarget = 56000;
                 DriverStation.reportWarning("High", false);
@@ -217,21 +221,18 @@ public class Robot extends TimedRobot {
         }
         elevator.magicElevator(elevatorTarget);
 
-        if(joystick.Y.isPressed()){
-            cargoIntake.pivotIntake(1);
-        }
-        else if(joystick.A.isPressed()){
-            cargoIntake.pivotIntake(-1);
+        if(joystick.Y.isToggledOn()){
+            cargoIntake.motionMagicPivot(4000, hatchIntake);
         }
         else{
-            cargoIntake.pivotIntake(0);
+            cargoIntake.motionMagicPivot(0, hatchIntake);
         }
     
         if(joystick.RB.isPressed()){
-            cargoIntake.intakeCargo(-1);
+            cargoIntake.intakeCargo(1);
         }
         else if(joystick.LB.isPressed()){
-            cargoIntake.intakeCargo(1);
+            cargoIntake.intakeCargo(-1);
         }
         else{
             cargoIntake.intakeCargo(0);
@@ -260,6 +261,100 @@ public class Robot extends TimedRobot {
         }
         else{
             hab.HABForward(0);
+        }
+    }
+    */
+
+    public void newDriverControls(PlasmaJoystick joystick){
+        driveTrain.FPSDrive(joystick.LeftY, joystick.RightX);
+
+        if(cargoIntake.getIsPivotUp()){ //hatch requirements
+            if(joystick.dPad.getPOV() == 0){
+                hatchIntake.fullExtend();
+            }
+            if(joystick.dPad.getPOV() == 90 || joystick.dPad.getPOV() == 270){
+                hatchIntake.halfExtend();
+            }
+            if(joystick.dPad.getPOV() == 180){
+                hatchIntake.fullRetract();
+            }
+
+            if(joystick.L3.isPressed()){
+                hatchIntake.releaseHatch();
+            }
+            if(joystick.R3.isPressed()){
+                hatchIntake.grabHatch();
+            }    
+        }
+
+        if(!hatchIntake.getIsClamped() && elevator.getIsElevatorDown()){ //pivot out requirements
+            if(joystick.Y.isToggledOn()){
+                hatchIntake.fullRetract();
+                hatchIntake.grabHatch();
+                pivotTarget = 4000;
+            }
+        }
+
+        if(!cargoIntake.getIsPivotUp()){ //pivot in requirements
+            if(!joystick.Y.isToggledOn()){
+                pivotTarget = -200;
+            }
+        }
+        cargoIntake.motionMagicPivot(pivotTarget, hatchIntake);
+         
+        if(joystick.RB.isPressed()){
+            cargoIntake.intakeCargo(1);
+        }
+        else if(joystick.LB.isPressed()){
+            cargoIntake.intakeCargo(-1);
+        }
+        else{
+            cargoIntake.intakeCargo(0);
+        }
+
+        if(cargoIntake.getIsPivotUp()){
+            if((joystick.LT.isPressed() && joystick.RT.isOffToOn()) || (joystick.RT.isPressed() && joystick.LT.isOffToOn())){
+                elevatorTarget = 29000;
+                DriverStation.reportWarning("Middle", false);
+            }
+            else{
+                if(joystick.LT.isOffToOn()){
+                    elevatorTarget = -200;
+                    DriverStation.reportWarning("Low", false);
+                }
+                if(joystick.RT.isOffToOn()){
+                    elevatorTarget = 56000;
+                    DriverStation.reportWarning("High", false);
+                }
+            }
+        }
+        elevator.magicElevator(elevatorTarget);
+
+        if(cargoIntake.getIsPivotUp()){
+            if(joystick.START.isPressed()){
+                hatchIntake.fullRetract();
+                hatchIntake.grabHatch();
+                hab.GyroHABClimb();
+            }
+            else if(joystick.BACK.isPressed()){
+                hatchIntake.releaseHatch();
+                hab.lowerRobot(1);
+                hab.GyroClimbReset();
+            }
+            else{
+                hab.raiseRobot(0);
+                hab.lowerRobot(0);
+            }
+
+            if(joystick.B.isPressed()){
+                hab.HABForward(0.5);
+            }
+            else if(joystick.X.isPressed()){
+                hab.HABForward(-0.5);
+            }
+            else{
+                hab.HABForward(0);
+            }
         }
     }
 

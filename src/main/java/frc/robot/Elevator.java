@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator {
@@ -16,6 +15,8 @@ public class Elevator {
     DigitalInput elevatorLimit;
 
     double elevatorSpeed;
+
+    boolean isElevatorDown;
 
     Elevator(int left_Elevator_ID, int Right_Elevator_ID, int limit_ID){
         leftElevator = new TalonSRX(left_Elevator_ID);
@@ -46,8 +47,10 @@ public class Elevator {
         leftElevator.config_kI(Constants.ELEVATOR_SLOT_IDX, Constants.ELEVATOR_I, Constants.ELEVATOR_TIMEOUT);
         leftElevator.config_kD(Constants.ELEVATOR_SLOT_IDX, Constants.ELEVATOR_D, Constants.ELEVATOR_TIMEOUT);
 
-        leftElevator.configMotionCruiseVelocity(10000);
-        leftElevator.configMotionAcceleration(5000);
+        leftElevator.configMotionCruiseVelocity(Constants.ELEVATOR_CRUISE_VELOCITY);
+        leftElevator.configMotionAcceleration(Constants.ELEVATOR_ACCELERATION);
+
+        isElevatorDown = true;
     }
 
     void Extend(double speed){
@@ -100,12 +103,22 @@ public class Elevator {
         if(position <= 0 && !elevatorLimit.get()) {
             leftElevator.setSelectedSensorPosition(0, 0, 0);
             leftElevator.set(ControlMode.PercentOutput, 0);
+            isElevatorDown = true;
+        }
+        else if(position <= 0 && leftElevator.getSelectedSensorPosition() <= 0 && elevatorLimit.get()){
+            leftElevator.set(ControlMode.PercentOutput, -.2);
+            isElevatorDown = false;
         }
         else{
             leftElevator.set(ControlMode.MotionMagic, position);
+            isElevatorDown = false;
         }
         SmartDashboard.putNumber("Elevator enc", leftElevator.getSelectedSensorPosition());
         SmartDashboard.putNumber("Elevator error", leftElevator.getClosedLoopError());
+    }
+
+    public boolean getIsElevatorDown(){
+        return isElevatorDown;
     }
 
 }
