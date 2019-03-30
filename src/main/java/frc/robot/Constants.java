@@ -68,6 +68,7 @@ public class Constants {
 	/*DIO ID Constants*/
 	public static final int PIVOT_LIMIT_ID = 0;
 	public static final int ELEVATOR_LIMIT_ID = 1;
+	public static final int HAB_LIMIT_ID = 2;
 
 
 	/* ELEVATOR MOTION MAGIC CONSTANTS */

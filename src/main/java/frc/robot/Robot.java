@@ -84,6 +84,7 @@ public class Robot extends TimedRobot {
                       Constants.L_HAB_ELEVATOR_ID,
                       Constants.R_HAB_ELEVATOR_ID,
                       Constants.HAB_DRIVE,
+                      Constants.HAB_LIMIT_ID,
                       driveTrain);
 
         compressor = new Compressor(0);
@@ -93,8 +94,6 @@ public class Robot extends TimedRobot {
         tx = table.getEntry("tx");
         ty = table.getEntry("ty");
         ta = table.getEntry("ta");
-
-        DriverStation.reportError("tx exists: " + tx.exists(), false);
 
         autoModeRunner = new AutoModeRunner();
         autoModes = new AutoMode[1];
@@ -134,6 +133,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("LimelightX", x);
         SmartDashboard.putNumber("LimelightY", y);
         SmartDashboard.putNumber("LimelighArea", area);
+
+        SmartDashboard.putBoolean("HAB Limit", hab.HABLimit.get());
         
     }
 

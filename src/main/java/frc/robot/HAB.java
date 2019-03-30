@@ -4,6 +4,9 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class HAB {
     TalonSRX leftRearRaise;
     TalonSRX rightRearRaise;
@@ -14,11 +17,14 @@ public class HAB {
     
     TalonSRX HABDrive;
 
-    HAB(int left_front_raise_ID, int right_front_raise_ID, int left_rear_raise_ID, int right_rear_raise_ID, int HAB_drive_ID, DriveTrain driveTrain) {
+    DigitalInput HABLimit;
+
+    HAB(int left_front_raise_ID, int right_front_raise_ID, int left_rear_raise_ID, int right_rear_raise_ID, int HAB_drive_ID, int HAB_Limit_ID, DriveTrain driveTrain) {
             leftFrontRaise = new TalonSRX(left_front_raise_ID);
             rightFrontRaise = new TalonSRX(right_front_raise_ID);
             leftRearRaise = new TalonSRX(left_rear_raise_ID);
             rightRearRaise = new TalonSRX(right_rear_raise_ID);
+            HABLimit = new DigitalInput(HAB_Limit_ID);
             HABDrive = new TalonSRX(HAB_drive_ID);
 
             this.driveTrain = driveTrain;
@@ -32,8 +38,13 @@ public class HAB {
     }
 
     void lowerRobot(double speed){
-        HABLift(speed);
-
+        if(HABLimit.get()){
+             HABLift(speed);
+        }
+        else{
+            HABLift(0);
+        }
+       
     }
 
     public void HABLift(double speed) {
