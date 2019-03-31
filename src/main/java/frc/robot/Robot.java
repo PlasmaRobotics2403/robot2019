@@ -48,6 +48,9 @@ public class Robot extends TimedRobot {
 
     double elevatorTarget;
     double pivotTarget;
+    double vision_X;
+    double vision_Y;
+    double vision_Area;
     //private static final String kDefaultAuto = "Default";
     //private static final String kCustomAuto = "My Auto";
     //private String m_autoSelected;
@@ -126,13 +129,13 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("GyroAngle", driveTrain.getGyroAngle());
         SmartDashboard.putNumber("Gyro pitch", driveTrain.getGyroPitch());
 
-        double x = tx.getDouble(0.0);
-        double y = ty.getDouble(0.0);
-        double area = ta.getDouble(0.0);
+        vision_X = tx.getDouble(0.0);
+        vision_Y = ty.getDouble(0.0);
+        vision_Area = ta.getDouble(0.0);
 
-        SmartDashboard.putNumber("LimelightX", x);
-        SmartDashboard.putNumber("LimelightY", y);
-        SmartDashboard.putNumber("LimelighArea", area);
+        SmartDashboard.putNumber("LimelightX", vision_X);
+        SmartDashboard.putNumber("LimelightY", vision_Y);
+        SmartDashboard.putNumber("LimelighArea", vision_Area);
 
         SmartDashboard.putBoolean("HAB Limit", hab.HABLimit.get());
         
@@ -267,7 +270,12 @@ public class Robot extends TimedRobot {
     */
 
     public void newDriverControls(PlasmaJoystick joystick){
-        driveTrain.FPSDrive(joystick.LeftY, joystick.RightX);
+        if(cargoIntake.getIsPivotUp() && joystick.A.isPressed()){
+            visionApproach();
+        }
+        else{
+            driveTrain.FPSDrive(joystick.LeftY, joystick.RightX);
+        }
 
         if(cargoIntake.getIsPivotUp()){ //hatch requirements
             if(joystick.dPad.getPOV() == 0){
@@ -356,9 +364,22 @@ public class Robot extends TimedRobot {
             else{
                 hab.HABForward(0);
             }
+
         }
     }
 
+    public void visionApproach() {
+        if(vision_Area == 0){
+            driveTrain.FPSDrive(0,0);
+        }
+        else{
+            double turnVal = vision_X/25;
+            turnVal = Math.min(turnVal, .4);
+            turnVal = Math.max(-.4, turnVal);
+            double forwardVal = .3;
+            driveTrain.FPSDrive(forwardVal, turnVal);
+        }
+    }
    
     @Override
     public void testPeriodic() {

@@ -19,6 +19,8 @@ public class HAB {
 
     DigitalInput HABLimit;
 
+    boolean limitState;
+
     HAB(int left_front_raise_ID, int right_front_raise_ID, int left_rear_raise_ID, int right_rear_raise_ID, int HAB_drive_ID, int HAB_Limit_ID, DriveTrain driveTrain) {
             leftFrontRaise = new TalonSRX(left_front_raise_ID);
             rightFrontRaise = new TalonSRX(right_front_raise_ID);
@@ -31,6 +33,8 @@ public class HAB {
 
             rightFrontRaise.setInverted(true);
             rightRearRaise.setInverted(true);
+
+            limitState = true;
     }
 
     void raiseRobot(double speed){
@@ -38,8 +42,11 @@ public class HAB {
     }
 
     void lowerRobot(double speed){
-        if(HABLimit.get()){
-             HABLift(speed);
+        if(limitState == false){
+            if(!HABLimit.get()){
+                limitState = true;
+            }
+            HABLift(speed);
         }
         else{
             HABLift(0);
@@ -81,6 +88,10 @@ public class HAB {
 
             leftFrontRaise.set(ControlMode.PercentOutput, (-1) * speed * Constants.MAX_HAB_ARM_SPEED * (1));
             rightFrontRaise.set(ControlMode.PercentOutput, (-1) * speed * Constants.MAX_HAB_ARM_SPEED * (1));
+
+            if(HABLimit.get()){
+                limitState = false;
+            }
 
         }
     }
