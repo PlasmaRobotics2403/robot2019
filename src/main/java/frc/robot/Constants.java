@@ -52,8 +52,8 @@ public class Constants {
 	
 	/*INTAKE CONSTANTS*/
 	public static final double INTAKE_SPEED = 1;
-	public static final double MAX_INTAKE_PIVOT_SPEED = 0.5;
-	public static final double PIVOT_RAMP_RATE = 0.001;
+	public static final double MAX_INTAKE_PIVOT_SPEED = 0.75;
+	public static final double PIVOT_RAMP_RATE = 0.002;
 	public static final int CAMERA_SERVO_ID = 0; 
 
 
@@ -68,7 +68,8 @@ public class Constants {
 	/*DIO ID Constants*/
 	public static final int PIVOT_LIMIT_ID = 0;
 	public static final int ELEVATOR_LIMIT_ID = 1;
-	public static final int HAB_LIMIT_ID = 2;
+	public static final int HAB_ELEVATOR_LIMIT_ID = 2;
+	public static final int HAB_ARM_LIMIT_ID = 3;
 
 
 	/* ELEVATOR MOTION MAGIC CONSTANTS */
@@ -91,4 +92,13 @@ public class Constants {
 	public static final int PIVOT_TIMEOUT = 60;
 	public static final int PIVOT_CRUISE_VELOCITY = 2000;
 	public static final int PIVOT_ACCELERATION = 800;
+
+
+	/* WAYPOINTS */
+	public static final double WAYPOINTS_DT = 0.05;
+	public static final double WAYPOINTS_MAX_VELOCITY = 1.7;
+	public static final double WAYPOINTS_MAX_ACCELERATION = 2.0;
+	public static final double WAYPOINTS_MAX_JERK = 60.0;
+
+	public static final double WHEELBASE_WIDTH = 0.6604;  //26 inches
 }

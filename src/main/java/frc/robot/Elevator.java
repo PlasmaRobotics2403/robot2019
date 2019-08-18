@@ -100,10 +100,10 @@ public class Elevator {
     }
 
     public void magicElevator(double position){
-        if(position <= 0 && !elevatorLimit.get()) {
+      if(position <= 0 && !elevatorLimit.get()) {
             leftElevator.setSelectedSensorPosition(0, 0, 0);
             leftElevator.set(ControlMode.PercentOutput, 0);
-            isElevatorDown = true;
+            //isElevatorDown = true;
         }
         else if(position <= 0 && leftElevator.getSelectedSensorPosition() <= 0 && elevatorLimit.get()){
             leftElevator.set(ControlMode.PercentOutput, -.2);

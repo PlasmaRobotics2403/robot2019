@@ -1,11 +1,10 @@
 package frc.robot.auto.actions;
 
-import frc.robot.DriveTrain;
-import frc.robot.auto.util.Action;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.DriveTrain;
+import frc.robot.auto.util.Action;
 /**
  *
  */
@@ -47,9 +46,9 @@ public class TurnAngle implements Action {
 
 	@Override
 	public void start() {
-		//drive.resetEncoders();
+		drive.resetEncoders();
 		while(Math.abs(drive.getDistance()) > 1){
-			//drive.resetEncoders();
+			drive.resetEncoders();
 			DriverStation.reportWarning("broke", false);
 			}
 		drive.zeroGyro();

@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-//import com.sun.org.apache.bcel.internal.Const;
 
 import frc.robot.auto.modes.*;
 import frc.robot.auto.util.*;
@@ -27,13 +26,14 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public class Robot extends TimedRobot {
 
     PlasmaJoystick joystick;
+    //PlasmaJoystick HABjoystick;
     DriveTrain driveTrain;
-    HatchIntake hatchIntake;
-    Elevator elevator;
-    CargoIntake cargoIntake;
-    HAB hab; 
+    //HatchIntake hatchIntake;
+    //Elevator elevator;
+    //CargoIntake cargoIntake;
+    //HAB hab; 
 
-    Compressor compressor;
+    //Compressor compressor;
 
     AutoModeRunner autoModeRunner;
     AutoMode[] autoModes;
@@ -44,23 +44,20 @@ public class Robot extends TimedRobot {
     NetworkTableEntry ty;
     NetworkTableEntry ta;
 
-    CameraServer server;
+    //CameraServer server;
 
     double elevatorTarget;
     double pivotTarget;
     double vision_X;
     double vision_Y;
     double vision_Area;
-    //private static final String kDefaultAuto = "Default";
-    //private static final String kCustomAuto = "My Auto";
-    //private String m_autoSelected;
-    //private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
     
     @Override
     public void robotInit() {
 
         joystick = new PlasmaJoystick(Constants.JOYSTICK1_PORT);
+        //HABjoystick = new PlasmaJoystick(1);
 
         driveTrain = new DriveTrain(Constants.L_DRIVE_ID,
                                     Constants.L_DRIVE_MID_SLAVE_ID,
@@ -69,7 +66,7 @@ public class Robot extends TimedRobot {
                                     Constants.R_DRIVE_MID_SLAVE_ID,
                                     Constants.R_DRIVE_FRONT_SLAVE_ID);
 
-        hatchIntake = new HatchIntake(Constants.CLAW_PISTON_ID,
+        /*hatchIntake = new HatchIntake(Constants.CLAW_PISTON_ID,
                                       Constants.BACK_EXTENDER_ID,
                                       Constants.FRONT_EXTENDER_ID);
 
@@ -87,35 +84,31 @@ public class Robot extends TimedRobot {
                       Constants.L_HAB_ELEVATOR_ID,
                       Constants.R_HAB_ELEVATOR_ID,
                       Constants.HAB_DRIVE,
-                      Constants.HAB_LIMIT_ID,
+                      Constants.HAB_ELEVATOR_LIMIT_ID,
+                      Constants.HAB_ARM_LIMIT_ID,
                       driveTrain);
 
         compressor = new Compressor(0);
         compressor.setClosedLoopControl(true);
-
+        */
+        
         table = NetworkTableInstance.getDefault().getTable("limelight");
         tx = table.getEntry("tx");
         ty = table.getEntry("ty");
         ta = table.getEntry("ta");
 
         autoModeRunner = new AutoModeRunner();
-        autoModes = new AutoMode[1];
+        autoModes = new AutoMode[10];
         for(int i = 0; i < autoModes.length; i++){
-            autoModes[i] = new Nothing();
+                autoModes[i] = new Nothing();
         }
 
         DriverStation.reportWarning("automode generated", false);
         autoModeSelection = 0;
         SmartDashboard.putNumber("Auto Mode", 0);
 
-        try{
-            //driveTrain.resetEncoders();
-            driveTrain.zeroGyro();
-        }
-        catch(Exception ex){
-            DriverStation.reportError("reset encoder error", ex.getStackTrace());
-        }
-        DriverStation.reportWarning("error", false);
+        driveTrain.resetEncoders();
+        driveTrain.zeroGyro();
 
         CameraServer.getInstance().startAutomaticCapture("USB camera", 0);
 
@@ -137,12 +130,12 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("LimelightY", vision_Y);
         SmartDashboard.putNumber("LimelighArea", vision_Area);
 
-        SmartDashboard.putBoolean("HAB Limit", hab.HABLimit.get());
+        //SmartDashboard.putBoolean("HAB Limit", hab.HABElevatorLimit.get());
         
     }
 
     public void disabledInit() {
-        compressor.start();
+        //compressor.start();
         autoModeRunner.stop();
         driveTrain.zeroGyro();
     }
@@ -153,20 +146,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        
+       
         DriverStation.reportWarning("starting auto", false);
-        //driveTrain.resetEncoders();
-        DriverStation.reportWarning("auto after reset encoders", false);
-        compressor.start();
+        driveTrain.resetEncoders();
+        //compressor.start();
         driveTrain.zeroGyro();
 
-        autoModes[0] = new TrajectoryTest(driveTrain);
+        autoModes[0] = new CrossBaseline(driveTrain);
 
-        autoModeSelection = (autoModeSelection >= autoModes.length) ? 0 : autoModeSelection;
-        autoModeSelection = (autoModeSelection < 0) ? 0 : autoModeSelection;
-        if(autoModeSelection == 1) {
-            DriverStation.reportWarning("auto mode selection works", false);
-        }
         autoModeRunner.chooseAutoMode(autoModes[0]); 
         autoModeRunner.start();
         
@@ -175,18 +162,18 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         driveTrain.getDistance();
-        SmartDashboard.putNumber("GyroAngle", driveTrain.getGyroAngle());
-        //driverControls(joystick);
+        
     }
 
     @Override
     public void teleopPeriodic() {
-        newDriverControls(joystick);
+        //newDriverControls(joystick);
+        //HABControls(HABjoystick);
     }
 
 
-   /* 
-    public void driverControls(PlasmaJoystick joy){
+    
+    /*public void driverControls(PlasmaJoystick joy){
         driveTrain.FPSDrive(joystick.LeftY, joystick.RightX);
 
         if(joystick.L3.isPressed()){
@@ -269,7 +256,7 @@ public class Robot extends TimedRobot {
     }
     */
 
-    public void newDriverControls(PlasmaJoystick joystick){
+    /*public void newDriverControls(PlasmaJoystick joystick){
         if(cargoIntake.getIsPivotUp() && joystick.A.isPressed()){
             visionApproach();
         }
@@ -296,7 +283,7 @@ public class Robot extends TimedRobot {
             }    
         }
 
-        if(!hatchIntake.getIsClamped() && elevator.getIsElevatorDown()){ //pivot out requirements
+        if(!hatchIntake.getIsClamped()){ //pivot out requirements
             if(joystick.Y.isToggledOn()){
                 hatchIntake.fullRetract();
                 hatchIntake.grabHatch();
@@ -312,9 +299,6 @@ public class Robot extends TimedRobot {
         cargoIntake.motionMagicPivot(pivotTarget, hatchIntake);
          
         if(joystick.RB.isPressed()){
-            cargoIntake.intakeCargo(1);
-        }
-        else if(joystick.LB.isPressed()){
             cargoIntake.intakeCargo(-1);
         }
         else{
@@ -323,8 +307,14 @@ public class Robot extends TimedRobot {
 
         if(cargoIntake.getIsPivotUp()){
             if((joystick.LT.isPressed() && joystick.RT.isOffToOn()) || (joystick.RT.isPressed() && joystick.LT.isOffToOn())){
+                hatchIntake.grabHatch();
                 elevatorTarget = 29000;
                 DriverStation.reportWarning("Middle", false);
+            }
+            else if(joystick.LB.isPressed()){
+                hatchIntake.grabHatch();
+                elevatorTarget = 13000;
+                DriverStation.reportWarning("Cargo", false);
             }
             else{
                 if(joystick.LT.isOffToOn()){
@@ -332,6 +322,7 @@ public class Robot extends TimedRobot {
                     DriverStation.reportWarning("Low", false);
                 }
                 if(joystick.RT.isOffToOn()){
+                    hatchIntake.grabHatch();
                     elevatorTarget = 56000;
                     DriverStation.reportWarning("High", false);
                 }
@@ -368,6 +359,16 @@ public class Robot extends TimedRobot {
         }
     }
 
+    
+    public void HABControls(PlasmaJoystick joystick){
+        if(joystick.A.isPressed()){
+            hab.ArmsUp();
+        }
+        if(joystick.B.isPressed()){
+            hab.ArmsDown();
+        }
+    }*/
+    
     public void visionApproach() {
         if(vision_Area == 0){
             driveTrain.FPSDrive(0,0);
@@ -379,6 +380,7 @@ public class Robot extends TimedRobot {
             double forwardVal = .3;
             driveTrain.FPSDrive(forwardVal, turnVal);
         }
+        
     }
    
     @Override

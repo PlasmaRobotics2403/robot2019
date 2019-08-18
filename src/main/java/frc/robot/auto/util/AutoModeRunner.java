@@ -1,17 +1,21 @@
 package frc.robot.auto.util;
 
+import java.io.IOException;
+
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class AutoModeRunner {
-	
+
 	private AutoMode auto;
 	private Thread autoThread;
-	
+
 	/**
-	 * This initializes the AutoModeRunner. Remember to run chooseAutoMode before starting it.
+	 * This initializes the AutoModeRunner. Remember to run chooseAutoMode before
+	 * starting it.
+	 * 
 	 * @author Nic A
 	 */
-	public AutoModeRunner(){
+	public AutoModeRunner() {
 		auto = null;
 		autoThread = null;
 	}
@@ -23,22 +27,28 @@ public class AutoModeRunner {
 	 * 
 	 * @author Nic A
 	 */
-	public void chooseAutoMode(AutoMode auto){
+	public void chooseAutoMode(AutoMode auto) {
 		this.auto = auto;
 	}
-	
+
 	/**
-	 * This starts the AutoMode chosen. This should be run in AutonomousInit only once.
+	 * This starts the AutoMode chosen. This should be run in AutonomousInit only
+	 * once.
 	 * 
 	 * @author Nic A
 	 */
-	public void start(){
+	public void start() {
 		stop();
-		autoThread = new Thread(){
+		autoThread = new Thread() {
 			@Override
-			public void run(){
-				if(auto != null){
-					auto.run();
+			public void run() {
+				if (auto != null) {
+					try {
+						auto.run();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				else{
 					DriverStation.reportError("Auto mode null", true);

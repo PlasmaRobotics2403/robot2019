@@ -4,8 +4,7 @@ package frc.robot;
 import frc.robot.controllers.PlasmaAxis;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-//import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-//import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
@@ -50,8 +49,8 @@ public class DriveTrain {
 		leftDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1);
 		rightDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1);
 		
-
-		//ErrorCode error1 = leftDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+		
+		leftDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
 		leftDrive.configNominalOutputForward(0, 30);
     	leftDrive.configNominalOutputReverse(0, 30);
     	leftDrive.configPeakOutputForward(1, 30);
@@ -61,7 +60,7 @@ public class DriveTrain {
 		leftDrive.config_kI(0, 20, 30);
 		leftDrive.config_kD(0, 1023.0/7200.0, 30);
 		
-		//ErrorCode error2 = rightDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+		rightDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
 		rightDrive.configNominalOutputForward(0, 30);
     	rightDrive.configNominalOutputReverse(0, 30);
     	rightDrive.configPeakOutputForward(1, 30);
@@ -71,16 +70,15 @@ public class DriveTrain {
 		rightDrive.config_kI(0, 20, 30);
 		rightDrive.config_kD(0, 1023.0/7200.0, 30);
 
-		//leftDrive.setSelectedSensorPosition(0,0,0);
-		//rightDrive.setSelectedSensorPosition(0,0,0);
+		leftDrive.setSelectedSensorPosition(0,0,0);
+		rightDrive.setSelectedSensorPosition(0,0,0);
 
 		leftDrive.set(ControlMode.Position, 0);
 		rightDrive.set(ControlMode.Position, 0);
+				
 
-		
-
-		//DriverStation.reportError("left Drive error: " + error1 + " position: " + leftDrive.getSelectedSensorPosition(0), false);
-		//DriverStation.reportError("Right Drive error: " + error2 + " position: " + rightDrive.getSelectedSensorPosition(0), false);
+		DriverStation.reportError("left position: " + leftDrive.getSelectedSensorPosition(0), false);
+		DriverStation.reportError("right position: " + rightDrive.getSelectedSensorPosition(0), false);
 
 		limitCurrent(leftDrive);
 		limitCurrent(rightDrive);
@@ -91,7 +89,7 @@ public class DriveTrain {
 
 		
 	}
-	/*
+	
 	public void resetEncoders(){
 		//double dist = Math.abs(getDistance());
 		leftDrive.setSelectedSensorPosition(0,0,0);
@@ -103,7 +101,7 @@ public class DriveTrain {
 			DriverStation.reportWarning("Stuck in loop", false);
 		}	
 	}
-	*/
+
 	public double getDistance(){
 		return (toDistance(rightDrive) + toDistance(leftDrive))/2;
 	}

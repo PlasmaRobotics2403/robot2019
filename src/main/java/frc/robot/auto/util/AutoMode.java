@@ -1,5 +1,7 @@
 package frc.robot.auto.util;
 
+import java.io.IOException;
+
 //import java.io.PrintWriter;
 //import java.io.StringWriter;
 
@@ -14,14 +16,18 @@ public abstract class AutoMode {
 	 * This should be defined in each auto mode class. It should be a series of runAction(action) calls.
 	 * @throws AutoModeEndedException
 	 * @author Nic A
+	 * @throws IOException
 	 */
-	protected abstract void routine() throws AutoModeEndedException;
+	protected abstract void routine() throws AutoModeEndedException, IOException;
 	
 	/**
-	 * This is responsible for running the routine. It will kill the auto mode early if an AutoModeEndedException is thrown.
+	 * This is responsible for running the routine. It will kill the auto mode early
+	 * if an AutoModeEndedException is thrown.
+	 * 
 	 * @author Nic A
+	 * @throws IOException
 	 */
-	public void run(){
+	public void run() throws IOException {
 		isActive = true;
 		try{
 			routine();

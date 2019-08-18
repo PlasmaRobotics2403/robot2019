@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class HAB {
     TalonSRX leftRearRaise;
@@ -17,16 +16,18 @@ public class HAB {
     
     TalonSRX HABDrive;
 
-    DigitalInput HABLimit;
+    DigitalInput HABElevatorLimit;
+    DigitalInput HABArmLimit;
 
     boolean limitState;
 
-    HAB(int left_front_raise_ID, int right_front_raise_ID, int left_rear_raise_ID, int right_rear_raise_ID, int HAB_drive_ID, int HAB_Limit_ID, DriveTrain driveTrain) {
+    HAB(int left_front_raise_ID, int right_front_raise_ID, int left_rear_raise_ID, int right_rear_raise_ID, int HAB_drive_ID, int HAB_Elevator_Limit_ID, int HAB_Arm_Limit_ID, DriveTrain driveTrain) {
             leftFrontRaise = new TalonSRX(left_front_raise_ID);
             rightFrontRaise = new TalonSRX(right_front_raise_ID);
             leftRearRaise = new TalonSRX(left_rear_raise_ID);
             rightRearRaise = new TalonSRX(right_rear_raise_ID);
-            HABLimit = new DigitalInput(HAB_Limit_ID);
+            HABElevatorLimit = new DigitalInput(HAB_Elevator_Limit_ID);
+            HABArmLimit = new DigitalInput(HAB_Arm_Limit_ID);
             HABDrive = new TalonSRX(HAB_drive_ID);
 
             this.driveTrain = driveTrain;
@@ -43,7 +44,7 @@ public class HAB {
 
     void lowerRobot(double speed){
         if(limitState == false){
-            if(!HABLimit.get()){
+            if(!HABElevatorLimit.get()){
                 limitState = true;
             }
             HABLift(speed);
@@ -55,7 +56,7 @@ public class HAB {
     }
 
     public void HABLift(double speed) {
-        if(speed > 0){
+        if(!HABArmLimit.get()){
             leftFrontRaise.set(ControlMode.PercentOutput, 0);
             rightFrontRaise.set(ControlMode.PercentOutput, 0);
             leftRearRaise.set(ControlMode.PercentOutput, speed * Constants.MAX_HAB_REAR_SPEED);
@@ -64,8 +65,8 @@ public class HAB {
         else{
             leftRearRaise.set(ControlMode.PercentOutput, speed * Constants.MAX_HAB_REAR_SPEED);
             rightRearRaise.set(ControlMode.PercentOutput, speed * Constants.MAX_HAB_REAR_SPEED);
-            leftFrontRaise.set(ControlMode.PercentOutput, speed * Constants.MAX_HAB_ARM_SPEED);
-            rightFrontRaise.set(ControlMode.PercentOutput, speed * Constants.MAX_HAB_ARM_SPEED);   
+            leftFrontRaise.set(ControlMode.PercentOutput, 0);
+            rightFrontRaise.set(ControlMode.PercentOutput, 0);   
         }
     }
 
@@ -74,7 +75,7 @@ public class HAB {
         if(climbMode == false){
             leftFrontRaise.set(ControlMode.PercentOutput, (-1));
             rightFrontRaise.set(ControlMode.PercentOutput, (-1));
-            if(driveTrain.getGyroPitch() < -2){
+            if(driveTrain.getGyroPitch() < -5){
                 climbMode = true;
             }
         }
@@ -89,7 +90,7 @@ public class HAB {
             leftFrontRaise.set(ControlMode.PercentOutput, (-1) * speed * Constants.MAX_HAB_ARM_SPEED * (1));
             rightFrontRaise.set(ControlMode.PercentOutput, (-1) * speed * Constants.MAX_HAB_ARM_SPEED * (1));
 
-            if(HABLimit.get()){
+            if(HABElevatorLimit.get()){
                 limitState = false;
             }
 
@@ -104,5 +105,15 @@ public class HAB {
         speed *= Constants.MAX_HAB_DRIVE_SPEED;
 
         HABDrive.set(ControlMode.PercentOutput, speed);
+    }
+
+    public void ArmsUp(){
+        leftFrontRaise.set(ControlMode.PercentOutput, 1);
+        rightFrontRaise.set(ControlMode.PercentOutput, 1);
+    }
+
+    public void ArmsDown(){
+        leftFrontRaise.set(ControlMode.PercentOutput, -0.5);
+        rightFrontRaise.set(ControlMode.PercentOutput, -0.5);
     }
 }

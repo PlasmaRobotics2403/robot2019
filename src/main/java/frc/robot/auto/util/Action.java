@@ -1,5 +1,7 @@
 package frc.robot.auto.util;
 
+import java.io.IOException;
+
 public interface Action {
 	
 	/**
@@ -10,6 +12,7 @@ public interface Action {
 	
 	/**
 	 * This runs once at the beginning of the action. 
+	 * @throws IOException
 	 */
 	public abstract void start();
 	
