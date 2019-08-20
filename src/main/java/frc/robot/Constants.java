@@ -40,7 +40,7 @@ public class Constants {
 	public static final double MAX_DRIVE_SPEED = 1;
 	public static final double MAX_DRIVE_TURN = 1;	
 	public static final double DRIVE_ENCODER_CONVERSION = 20.9528184;
-	public static final double DRIVE_WHEEL_WIDTH = 27;
+
 
 	/*HATCH CONSTANTS*/
 	
@@ -94,11 +94,23 @@ public class Constants {
 	public static final int PIVOT_ACCELERATION = 800;
 
 
-	/* WAYPOINTS */
-	public static final double WAYPOINTS_DT = 0.05;
-	public static final double WAYPOINTS_MAX_VELOCITY = 1.7;
-	public static final double WAYPOINTS_MAX_ACCELERATION = 2.0;
-	public static final double WAYPOINTS_MAX_JERK = 60.0;
+	/* PATHFINDER/PATHWEAVER */
+	public static final int TICKS_PER_REV = 1024;
+	public static final double WHEEL_WIDTH = 26;
 
-	public static final double WHEELBASE_WIDTH = 0.6604;  //26 inches
+	public static final double AUTON_P = 0.4;
+	public static final double AUTON_I = 0;
+	public static final double AUTON_D = 0;
+	public static final double AUTON_V = 1;
+	public static final double AUTON_A = 0;
+
+	public static final String PATH_NAME = "testing";
+
+
+	//public static final double WAYPOINTS_DT = 0.05;
+	
+	//public static final double WAYPOINTS_MAX_ACCELERATION = 2.0;
+	//public static final double WAYPOINTS_MAX_JERK = 60.0;
+
+	//public static final double WHEELBASE_WIDTH = 0.6604;  //26 inches
 }

@@ -18,7 +18,7 @@ public abstract class AutoMode {
 	 * @author Nic A
 	 * @throws IOException
 	 */
-	protected abstract void routine() throws AutoModeEndedException, IOException;
+	protected abstract void routine() throws AutoModeEndedException;
 	
 	/**
 	 * This is responsible for running the routine. It will kill the auto mode early

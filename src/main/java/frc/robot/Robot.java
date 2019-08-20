@@ -7,33 +7,41 @@
 
 package frc.robot;
 
-
 import frc.robot.auto.modes.*;
 import frc.robot.auto.util.*;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controllers.PlasmaJoystick;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.PathfinderFRC;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.followers.EncoderFollower;
 import edu.wpi.first.wpilibj.Compressor;
+
+import java.io.IOException;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-
 public class Robot extends TimedRobot {
 
     PlasmaJoystick joystick;
-    //PlasmaJoystick HABjoystick;
+    // PlasmaJoystick HABjoystick;
     DriveTrain driveTrain;
-    //HatchIntake hatchIntake;
-    //Elevator elevator;
-    //CargoIntake cargoIntake;
-    //HAB hab; 
+    // HatchIntake hatchIntake;
+    // Elevator elevator;
+    // CargoIntake cargoIntake;
+    // HAB hab;
 
-    //Compressor compressor;
+    // Compressor compressor;
 
     AutoModeRunner autoModeRunner;
     AutoMode[] autoModes;
@@ -44,7 +52,7 @@ public class Robot extends TimedRobot {
     NetworkTableEntry ty;
     NetworkTableEntry ta;
 
-    //CameraServer server;
+    // CameraServer server;
 
     double elevatorTarget;
     double pivotTarget;
@@ -52,46 +60,35 @@ public class Robot extends TimedRobot {
     double vision_Y;
     double vision_Area;
 
-    
+
     @Override
     public void robotInit() {
 
         joystick = new PlasmaJoystick(Constants.JOYSTICK1_PORT);
-        //HABjoystick = new PlasmaJoystick(1);
+        // HABjoystick = new PlasmaJoystick(1);
 
-        driveTrain = new DriveTrain(Constants.L_DRIVE_ID,
-                                    Constants.L_DRIVE_MID_SLAVE_ID,
-                                    Constants.L_DRIVE_FRONT_SLAVE_ID,
-                                    Constants.R_DRIVE_ID,
-                                    Constants.R_DRIVE_MID_SLAVE_ID,
-                                    Constants.R_DRIVE_FRONT_SLAVE_ID);
+        driveTrain = new DriveTrain(Constants.L_DRIVE_ID, Constants.L_DRIVE_MID_SLAVE_ID,
+                Constants.L_DRIVE_FRONT_SLAVE_ID, Constants.R_DRIVE_ID, Constants.R_DRIVE_MID_SLAVE_ID,
+                Constants.R_DRIVE_FRONT_SLAVE_ID);
 
-        /*hatchIntake = new HatchIntake(Constants.CLAW_PISTON_ID,
-                                      Constants.BACK_EXTENDER_ID,
-                                      Constants.FRONT_EXTENDER_ID);
+        /*
+         * hatchIntake = new HatchIntake(Constants.CLAW_PISTON_ID,
+         * Constants.BACK_EXTENDER_ID, Constants.FRONT_EXTENDER_ID);
+         * 
+         * elevator = new Elevator(Constants.L_ELEVATOR_ID, Constants.R_ELEVATOR_ID,
+         * Constants.ELEVATOR_LIMIT_ID);
+         * 
+         * cargoIntake = new CargoIntake(Constants.PIVOT_ID, Constants.INTAKE_ID,
+         * Constants.PIVOT_LIMIT_ID, Constants.CAMERA_SERVO_ID);
+         * 
+         * hab = new HAB(Constants.L_HAB_ARM_ID, Constants.R_HAB_ARM_ID,
+         * Constants.L_HAB_ELEVATOR_ID, Constants.R_HAB_ELEVATOR_ID,
+         * Constants.HAB_DRIVE, Constants.HAB_ELEVATOR_LIMIT_ID,
+         * Constants.HAB_ARM_LIMIT_ID, driveTrain);
+         * 
+         * compressor = new Compressor(0); compressor.setClosedLoopControl(true);
+         */
 
-        elevator = new Elevator(Constants.L_ELEVATOR_ID,
-                                Constants.R_ELEVATOR_ID,
-                                Constants.ELEVATOR_LIMIT_ID);
-
-        cargoIntake = new CargoIntake(Constants.PIVOT_ID,
-                                      Constants.INTAKE_ID, 
-                                      Constants.PIVOT_LIMIT_ID,
-                                      Constants.CAMERA_SERVO_ID);
-
-        hab = new HAB(Constants.L_HAB_ARM_ID,
-                      Constants.R_HAB_ARM_ID,
-                      Constants.L_HAB_ELEVATOR_ID,
-                      Constants.R_HAB_ELEVATOR_ID,
-                      Constants.HAB_DRIVE,
-                      Constants.HAB_ELEVATOR_LIMIT_ID,
-                      Constants.HAB_ARM_LIMIT_ID,
-                      driveTrain);
-
-        compressor = new Compressor(0);
-        compressor.setClosedLoopControl(true);
-        */
-        
         table = NetworkTableInstance.getDefault().getTable("limelight");
         tx = table.getEntry("tx");
         ty = table.getEntry("ty");
@@ -99,8 +96,8 @@ public class Robot extends TimedRobot {
 
         autoModeRunner = new AutoModeRunner();
         autoModes = new AutoMode[10];
-        for(int i = 0; i < autoModes.length; i++){
-                autoModes[i] = new Nothing();
+        for (int i = 0; i < autoModes.length; i++) {
+            autoModes[i] = new Nothing();
         }
 
         DriverStation.reportWarning("automode generated", false);
@@ -116,7 +113,6 @@ public class Robot extends TimedRobot {
         pivotTarget = 0;
     }
 
-    
     @Override
     public void robotPeriodic() {
         SmartDashboard.putNumber("GyroAngle", driveTrain.getGyroAngle());
@@ -130,23 +126,23 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("LimelightY", vision_Y);
         SmartDashboard.putNumber("LimelighArea", vision_Area);
 
-        //SmartDashboard.putBoolean("HAB Limit", hab.HABElevatorLimit.get());
-        
+        // SmartDashboard.putBoolean("HAB Limit", hab.HABElevatorLimit.get());
+
     }
 
     public void disabledInit() {
-        //compressor.start();
+        // compressor.start();
         autoModeRunner.stop();
         driveTrain.zeroGyro();
     }
 
     public void disabledPeriodic() {
-        autoModeSelection = (int)SmartDashboard.getNumber("Auto Mode", 0);
+        autoModeSelection = (int) SmartDashboard.getNumber("Auto Mode", 0);
     }
 
     @Override
     public void autonomousInit() {
-       
+
         DriverStation.reportWarning("starting auto", false);
         driveTrain.resetEncoders();
         //compressor.start();
@@ -156,14 +152,15 @@ public class Robot extends TimedRobot {
 
         autoModeRunner.chooseAutoMode(autoModes[0]); 
         autoModeRunner.start();
-        
     }
 
+        
     @Override
     public void autonomousPeriodic() {
         driveTrain.getDistance();
         
     }
+
 
     @Override
     public void teleopPeriodic() {
