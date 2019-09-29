@@ -46,29 +46,27 @@ public class AutoModeRunner {
 					try {
 						auto.run();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}
-				else{
+				} else {
 					DriverStation.reportError("Auto mode null", true);
 				}
 			}
 		};
 		autoThread.start();
 	}
-	
+
 	/**
-	 * Stops the auto mode and kills the thread it runs in. This should be run in TeleopInit to ensure auto code has ended.
+	 * Stops the auto mode and kills the thread it runs in. This should be run in
+	 * TeleopInit to ensure auto code has ended.
 	 * 
 	 * @author Nic A
 	 */
-	public void stop(){
-		if(auto != null){
+	public void stop() {
+		if (auto != null) {
 			auto.stop();
 		}
 		autoThread = null;
 	}
-	
-	
+
 }

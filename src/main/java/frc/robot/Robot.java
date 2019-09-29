@@ -11,20 +11,10 @@ import frc.robot.auto.modes.*;
 import frc.robot.auto.util.*;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controllers.PlasmaJoystick;
-import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.PathfinderFRC;
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.followers.EncoderFollower;
-import edu.wpi.first.wpilibj.Compressor;
-
-import java.io.IOException;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
@@ -34,14 +24,14 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public class Robot extends TimedRobot {
 
     PlasmaJoystick joystick;
-    // PlasmaJoystick HABjoystick;
+    PlasmaJoystick HABjoystick;
     DriveTrain driveTrain;
-    // HatchIntake hatchIntake;
-    // Elevator elevator;
-    // CargoIntake cargoIntake;
-    // HAB hab;
+    HatchIntake hatchIntake;
+    Elevator elevator;
+    CargoIntake cargoIntake;
+    HAB hab;
 
-    // Compressor compressor;
+    Compressor compressor;
 
     AutoModeRunner autoModeRunner;
     AutoMode[] autoModes;
@@ -60,34 +50,30 @@ public class Robot extends TimedRobot {
     double vision_Y;
     double vision_Area;
 
-
     @Override
     public void robotInit() {
 
         joystick = new PlasmaJoystick(Constants.JOYSTICK1_PORT);
-        // HABjoystick = new PlasmaJoystick(1);
+        HABjoystick = new PlasmaJoystick(1);
 
         driveTrain = new DriveTrain(Constants.L_DRIVE_ID, Constants.L_DRIVE_MID_SLAVE_ID,
                 Constants.L_DRIVE_FRONT_SLAVE_ID, Constants.R_DRIVE_ID, Constants.R_DRIVE_MID_SLAVE_ID,
                 Constants.R_DRIVE_FRONT_SLAVE_ID);
 
-        /*
-         * hatchIntake = new HatchIntake(Constants.CLAW_PISTON_ID,
-         * Constants.BACK_EXTENDER_ID, Constants.FRONT_EXTENDER_ID);
-         * 
-         * elevator = new Elevator(Constants.L_ELEVATOR_ID, Constants.R_ELEVATOR_ID,
-         * Constants.ELEVATOR_LIMIT_ID);
-         * 
-         * cargoIntake = new CargoIntake(Constants.PIVOT_ID, Constants.INTAKE_ID,
-         * Constants.PIVOT_LIMIT_ID, Constants.CAMERA_SERVO_ID);
-         * 
-         * hab = new HAB(Constants.L_HAB_ARM_ID, Constants.R_HAB_ARM_ID,
-         * Constants.L_HAB_ELEVATOR_ID, Constants.R_HAB_ELEVATOR_ID,
-         * Constants.HAB_DRIVE, Constants.HAB_ELEVATOR_LIMIT_ID,
-         * Constants.HAB_ARM_LIMIT_ID, driveTrain);
-         * 
-         * compressor = new Compressor(0); compressor.setClosedLoopControl(true);
-         */
+        hatchIntake = new HatchIntake(Constants.CLAW_PISTON_ID, Constants.BACK_EXTENDER_ID,
+                Constants.FRONT_EXTENDER_ID);
+
+        elevator = new Elevator(Constants.L_ELEVATOR_ID, Constants.R_ELEVATOR_ID, Constants.ELEVATOR_LIMIT_ID);
+
+        cargoIntake = new CargoIntake(Constants.PIVOT_ID, Constants.INTAKE_ID, Constants.PIVOT_LIMIT_ID,
+                Constants.CAMERA_SERVO_ID);
+
+        hab = new HAB(Constants.L_HAB_ARM_ID, Constants.R_HAB_ARM_ID, Constants.L_HAB_ELEVATOR_ID,
+                Constants.R_HAB_ELEVATOR_ID, Constants.HAB_DRIVE, Constants.HAB_ELEVATOR_LIMIT_ID,
+                Constants.HAB_ARM_LIMIT_ID, driveTrain);
+
+        compressor = new Compressor(0);
+        compressor.setClosedLoopControl(true);
 
         table = NetworkTableInstance.getDefault().getTable("limelight");
         tx = table.getEntry("tx");
@@ -145,180 +131,90 @@ public class Robot extends TimedRobot {
 
         DriverStation.reportWarning("starting auto", false);
         driveTrain.resetEncoders();
-        //compressor.start();
+        // compressor.start();
         driveTrain.zeroGyro();
 
-        autoModes[0] = new CrossBaseline(driveTrain);
+        autoModes[0] = new CloseSideHatch(driveTrain, hatchIntake);
 
-        autoModeRunner.chooseAutoMode(autoModes[0]); 
+        autoModeRunner.chooseAutoMode(autoModes[0]);
         autoModeRunner.start();
     }
 
-        
     @Override
     public void autonomousPeriodic() {
         driveTrain.getDistance();
-        
-    }
 
+    }
 
     @Override
     public void teleopPeriodic() {
-        //newDriverControls(joystick);
-        //HABControls(HABjoystick);
+        newDriverControls(joystick);
+        // HABControls(HABjoystick);
     }
 
-
-    
-    /*public void driverControls(PlasmaJoystick joy){
-        driveTrain.FPSDrive(joystick.LeftY, joystick.RightX);
-
-        if(joystick.L3.isPressed()){
-            hatchIntake.releaseHatch();
-        }
-        if(joystick.R3.isPressed()){
-            hatchIntake.grabHatch();
-        }
-
-        if(joystick.dPad.getPOV() == 0){
-            hatchIntake.fullExtend();
-        }
-        if(joystick.dPad.getPOV() == 90){
-            hatchIntake.halfExtend();
-        }
-        if(joystick.dPad.getPOV() == 180){
-            hatchIntake.fullRetract();
-        }
-        if(joystick.dPad.getPOV() == 270){
-            hatchIntake.halfExtend();
-        }
-        
-        if((joystick.LT.isPressed() && joystick.RT.isOffToOn()) || (joystick.RT.isPressed() && joystick.LT.isOffToOn())){
-            elevatorTarget = 29000;
-            DriverStation.reportWarning("Middle", false);
-        }
-        else{
-            if(joystick.LT.isOffToOn()){
-                elevatorTarget = -200;
-                DriverStation.reportWarning("Low", false);
-            }
-            if(joystick.RT.isOffToOn()){
-                elevatorTarget = 56000;
-                DriverStation.reportWarning("High", false);
-            }
-        }
-        elevator.magicElevator(elevatorTarget);
-
-        if(joystick.Y.isToggledOn()){
-            cargoIntake.motionMagicPivot(4000, hatchIntake);
-        }
-        else{
-            cargoIntake.motionMagicPivot(0, hatchIntake);
-        }
-    
-        if(joystick.RB.isPressed()){
-            cargoIntake.intakeCargo(1);
-        }
-        else if(joystick.LB.isPressed()){
-            cargoIntake.intakeCargo(-1);
-        }
-        else{
-            cargoIntake.intakeCargo(0);
-        }
-
-        if(joystick.START.isPressed()){
-            //hab.raiseRobot(1);
-            hab.GyroHABClimb();
-        }
-        else if(joystick.BACK.isPressed()){
-            hab.lowerRobot(1);
-            hab.GyroClimbReset();
-        }
-        else{
-            hab.raiseRobot(0);
-            hab.lowerRobot(0);
-        }
-
-
-
-        if(joystick.B.isPressed()){
-            hab.HABForward(0.5);
-        }
-        else if(joystick.X.isPressed()){
-            hab.HABForward(-0.5);
-        }
-        else{
-            hab.HABForward(0);
-        }
-    }
-    */
-
-    /*public void newDriverControls(PlasmaJoystick joystick){
-        if(cargoIntake.getIsPivotUp() && joystick.A.isPressed()){
+    public void newDriverControls(PlasmaJoystick joystick) {
+        if (cargoIntake.getIsPivotUp() && joystick.A.isPressed()) {
             visionApproach();
-        }
-        else{
+        } else {
             driveTrain.FPSDrive(joystick.LeftY, joystick.RightX);
         }
 
-        if(cargoIntake.getIsPivotUp()){ //hatch requirements
-            if(joystick.dPad.getPOV() == 0){
+        if (cargoIntake.getIsPivotUp()) { // hatch requirements
+            if (joystick.dPad.getPOV() == 0) {
                 hatchIntake.fullExtend();
             }
-            if(joystick.dPad.getPOV() == 90 || joystick.dPad.getPOV() == 270){
+            if (joystick.dPad.getPOV() == 90 || joystick.dPad.getPOV() == 270) {
                 hatchIntake.halfExtend();
             }
-            if(joystick.dPad.getPOV() == 180){
+            if (joystick.dPad.getPOV() == 180) {
                 hatchIntake.fullRetract();
             }
 
-            if(joystick.L3.isPressed()){
+            if (joystick.L3.isPressed()) {
                 hatchIntake.releaseHatch();
             }
-            if(joystick.R3.isPressed()){
+            if (joystick.R3.isPressed()) {
                 hatchIntake.grabHatch();
-            }    
+            }
         }
 
-        if(!hatchIntake.getIsClamped()){ //pivot out requirements
-            if(joystick.Y.isToggledOn()){
+        if (!hatchIntake.getIsClamped()) { // pivot out requirements
+            if (joystick.Y.isToggledOn()) {
                 hatchIntake.fullRetract();
                 hatchIntake.grabHatch();
                 pivotTarget = 4000;
             }
         }
 
-        if(!cargoIntake.getIsPivotUp()){ //pivot in requirements
-            if(!joystick.Y.isToggledOn()){
+        if (!cargoIntake.getIsPivotUp()) { // pivot in requirements
+            if (!joystick.Y.isToggledOn()) {
                 pivotTarget = -200;
             }
         }
         cargoIntake.motionMagicPivot(pivotTarget, hatchIntake);
-         
-        if(joystick.RB.isPressed()){
+
+        if (joystick.RB.isPressed()) {
             cargoIntake.intakeCargo(-1);
-        }
-        else{
+        } else {
             cargoIntake.intakeCargo(0);
         }
 
-        if(cargoIntake.getIsPivotUp()){
-            if((joystick.LT.isPressed() && joystick.RT.isOffToOn()) || (joystick.RT.isPressed() && joystick.LT.isOffToOn())){
+        if (cargoIntake.getIsPivotUp()) {
+            if ((joystick.LT.isPressed() && joystick.RT.isOffToOn())
+                    || (joystick.RT.isPressed() && joystick.LT.isOffToOn())) {
                 hatchIntake.grabHatch();
                 elevatorTarget = 29000;
                 DriverStation.reportWarning("Middle", false);
-            }
-            else if(joystick.LB.isPressed()){
+            } else if (joystick.LB.isPressed()) {
                 hatchIntake.grabHatch();
                 elevatorTarget = 13000;
                 DriverStation.reportWarning("Cargo", false);
-            }
-            else{
-                if(joystick.LT.isOffToOn()){
+            } else {
+                if (joystick.LT.isOffToOn()) {
                     elevatorTarget = -200;
                     DriverStation.reportWarning("Low", false);
                 }
-                if(joystick.RT.isOffToOn()){
+                if (joystick.RT.isOffToOn()) {
                     hatchIntake.grabHatch();
                     elevatorTarget = 56000;
                     DriverStation.reportWarning("High", false);
@@ -327,59 +223,53 @@ public class Robot extends TimedRobot {
         }
         elevator.magicElevator(elevatorTarget);
 
-        if(cargoIntake.getIsPivotUp()){
-            if(joystick.START.isPressed()){
+        if (cargoIntake.getIsPivotUp()) {
+            if (joystick.START.isPressed()) {
                 hatchIntake.fullRetract();
                 hatchIntake.grabHatch();
                 hab.GyroHABClimb();
-            }
-            else if(joystick.BACK.isPressed()){
+            } else if (joystick.BACK.isPressed()) {
                 hatchIntake.releaseHatch();
                 hab.lowerRobot(1);
                 hab.GyroClimbReset();
-            }
-            else{
+            } else {
                 hab.raiseRobot(0);
                 hab.lowerRobot(0);
             }
 
-            if(joystick.B.isPressed()){
+            if (joystick.B.isPressed()) {
                 hab.HABForward(0.5);
-            }
-            else if(joystick.X.isPressed()){
+            } else if (joystick.X.isPressed()) {
                 hab.HABForward(-0.5);
-            }
-            else{
+            } else {
                 hab.HABForward(0);
             }
 
         }
     }
 
-    
-    public void HABControls(PlasmaJoystick joystick){
-        if(joystick.A.isPressed()){
+    public void HABControls(PlasmaJoystick joystick) {
+        if (joystick.A.isPressed()) {
             hab.ArmsUp();
         }
-        if(joystick.B.isPressed()){
+        if (joystick.B.isPressed()) {
             hab.ArmsDown();
         }
-    }*/
-    
+    }
+
     public void visionApproach() {
-        if(vision_Area == 0){
-            driveTrain.FPSDrive(0,0);
-        }
-        else{
-            double turnVal = vision_X/25;
+        if (vision_Area == 0) {
+            driveTrain.FPSDrive(0, 0);
+        } else {
+            double turnVal = vision_X / 25;
             turnVal = Math.min(turnVal, .4);
             turnVal = Math.max(-.4, turnVal);
             double forwardVal = .3;
             driveTrain.FPSDrive(forwardVal, turnVal);
         }
-        
+
     }
-   
+
     @Override
     public void testPeriodic() {
     }
