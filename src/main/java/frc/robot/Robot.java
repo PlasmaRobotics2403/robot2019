@@ -42,13 +42,15 @@ public class Robot extends TimedRobot {
     NetworkTableEntry ty;
     NetworkTableEntry ta;
 
-    // CameraServer server;
+    CameraServer server;
 
     double elevatorTarget;
     double pivotTarget;
     double vision_X;
     double vision_Y;
     double vision_Area;
+
+    boolean driverTakeover;
 
     @Override
     public void robotInit() {
@@ -79,6 +81,8 @@ public class Robot extends TimedRobot {
         tx = table.getEntry("tx");
         ty = table.getEntry("ty");
         ta = table.getEntry("ta");
+
+        driverTakeover = false;
 
         autoModeRunner = new AutoModeRunner();
         autoModes = new AutoMode[10];
@@ -117,9 +121,10 @@ public class Robot extends TimedRobot {
     }
 
     public void disabledInit() {
-        // compressor.start();
+        compressor.start();
         autoModeRunner.stop();
         driveTrain.zeroGyro();
+        hab.GyroClimbReset();
     }
 
     public void disabledPeriodic() {
@@ -131,10 +136,10 @@ public class Robot extends TimedRobot {
 
         DriverStation.reportWarning("starting auto", false);
         driveTrain.resetEncoders();
-        // compressor.start();
+        compressor.start();
         driveTrain.zeroGyro();
 
-        autoModes[0] = new CloseSideHatch(driveTrain, hatchIntake);
+        autoModes[0] = new CloseSideHatch(driveTrain, hatchIntake, elevator);
 
         autoModeRunner.chooseAutoMode(autoModes[0]);
         autoModeRunner.start();
@@ -143,13 +148,20 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         driveTrain.getDistance();
+        if (joystick.A.isPressed()) {
+            autoModeRunner.stop();
+            driverTakeover = true;
+        }
+        if (driverTakeover) {
+            newDriverControls(joystick);
+        }
 
     }
 
     @Override
     public void teleopPeriodic() {
         newDriverControls(joystick);
-        // HABControls(HABjoystick);
+        HABControls(HABjoystick);
     }
 
     public void newDriverControls(PlasmaJoystick joystick) {
@@ -223,36 +235,49 @@ public class Robot extends TimedRobot {
         }
         elevator.magicElevator(elevatorTarget);
 
-        if (cargoIntake.getIsPivotUp()) {
-            if (joystick.START.isPressed()) {
-                hatchIntake.fullRetract();
-                hatchIntake.grabHatch();
-                hab.GyroHABClimb();
-            } else if (joystick.BACK.isPressed()) {
-                hatchIntake.releaseHatch();
-                hab.lowerRobot(1);
-                hab.GyroClimbReset();
-            } else {
-                hab.raiseRobot(0);
-                hab.lowerRobot(0);
-            }
-
-            if (joystick.B.isPressed()) {
-                hab.HABForward(0.5);
-            } else if (joystick.X.isPressed()) {
-                hab.HABForward(-0.5);
-            } else {
-                hab.HABForward(0);
-            }
-
-        }
+        /*
+         * if (cargoIntake.getIsPivotUp()) { if (joystick.START.isPressed() ||
+         * HABjoystick.START.isPressed()) { hatchIntake.fullRetract();
+         * hatchIntake.grabHatch(); hab.GyroHABClimb(); } else if
+         * (joystick.BACK.isPressed() || HABjoystick.BACK.isPressed()) {
+         * hatchIntake.releaseHatch(); hab.lowerRobot(1); hab.GyroClimbReset(); } else {
+         * hab.raiseRobot(0); hab.lowerRobot(0); }
+         * 
+         * if (joystick.B.isPressed() || HABjoystick.B.isPressed()) {
+         * hab.HABForward(0.5); } else if (joystick.X.isPressed() ||
+         * HABjoystick.X.isPressed()) { hab.HABForward(-0.5); } else {
+         * hab.HABForward(0); }
+         * 
+         * }
+         */
     }
 
     public void HABControls(PlasmaJoystick joystick) {
-        if (joystick.A.isPressed()) {
+        if (HABjoystick.START.isPressed()) {
+            hatchIntake.fullRetract();
+            hatchIntake.grabHatch();
+            hab.GyroHABClimb();
+        } else if (HABjoystick.BACK.isPressed()) {
+            hatchIntake.releaseHatch();
+            hab.lowerRobot(1);
+            hab.GyroClimbReset();
+        } else {
+            hab.raiseRobot(0);
+            hab.lowerRobot(0);
+        }
+
+        if (HABjoystick.B.isPressed()) {
+            hab.HABForward(0.5);
+        } else if (HABjoystick.X.isPressed()) {
+            hab.HABForward(-0.5);
+        } else {
+            hab.HABForward(0);
+        }
+
+        if (HABjoystick.Y.isPressed()) {
             hab.ArmsUp();
         }
-        if (joystick.B.isPressed()) {
+        if (HABjoystick.A.isPressed()) {
             hab.ArmsDown();
         }
     }
